@@ -44,12 +44,12 @@
             <artifactId>org-openide-util</artifactId>
             <version>7.3</version>
         </dependency>
-        <dependency>
+<!--        <dependency>
             <groupId>com.jaspersoft</groupId>
             <artifactId>ireport</artifactId>
             <version>1.0</version>
-        </dependency>
-        <dependency>
+        </dependency>-->
+<!--        <dependency>
             <groupId>com.jaspersoft</groupId>
             <artifactId>jasperserver</artifactId>
             <version>1.0</version>
@@ -63,7 +63,7 @@
             <groupId>com.jaspersoft</groupId>
             <artifactId>jasperserver-api-metadata</artifactId>
             <version>4.5.0</version>
-        </dependency>
+        </dependency>-->
         
         <dependency>
             <groupId>com.itextpdf.tool</groupId>
@@ -72,11 +72,11 @@
             <type>jar</type>
         </dependency>
 
-        <dependency>
+<!--        <dependency>
             <groupId>com.jaspersoft</groupId>
             <artifactId>common</artifactId>
             <version>2.0.1</version>
-        </dependency>
+        </dependency>-->
         <dependency>
             <groupId>org.apache.axis</groupId>
             <artifactId>axis</artifactId>
@@ -165,11 +165,11 @@
             <artifactId>itext</artifactId>
             <version>2.1.7</version>
         </dependency>
-        <dependency>
+<!--        <dependency>
             <groupId>net.sf.jasperreports</groupId>
             <artifactId>jasperreports</artifactId>
             <version>5.1.0</version>
-        </dependency>
+        </dependency>-->
     
         <dependency>
             <groupId>commons-fileupload</groupId>
