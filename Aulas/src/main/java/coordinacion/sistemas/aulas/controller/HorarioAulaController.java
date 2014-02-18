@@ -4,8 +4,8 @@
  */
 package coordinacion.sistemas.aulas.controller;
 
-import auxiliar.MatrizConNombres;
 import coordinacion.sistemas.aulas.beans.InformacionAula;
+import coordinacion.sistemas.aulas.beans.VariablesJSON;
 import coordinacion.sistemas.aulas.entities.CatalogoAulas;
 import coordinacion.sistemas.aulas.entities.CatalogoEspecialidades;
 import coordinacion.sistemas.aulas.entities.CatalogoGrupos;
@@ -25,7 +25,6 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import javax.ejb.EJB;
-import javax.swing.JOptionPane;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -91,14 +90,14 @@ public class HorarioAulaController {
         BigDecimal idMat = BigDecimal.valueOf((long) idMateria);
         if (idMateria != -1) {
             materia = materiaFacade.find(idMat);
-            System.out.println("Entro y separo materias");
-        }else{
+            System.out.println("Entro y separo materias -----idRecibido---->"+idMat);
+        } else {
             tipoHorario = "All";
         }
-        
+
         List<CatalogoGrupos> listaTeoricos = new ArrayList<CatalogoGrupos>();
         List<CatalogoGrupos> listaPracticos = new ArrayList<CatalogoGrupos>();
-        List<CatalogoGrupos> listaTodos = new ArrayList<CatalogoGrupos>();
+//        List<CatalogoGrupos> listaTodos = new ArrayList<CatalogoGrupos>();
         List<CatalogoGrupos> listaGrupos = grupoFacade.findAll();
         for (Iterator<CatalogoGrupos> it = listaGrupos.iterator(); it.hasNext();) {
             CatalogoGrupos grupo = it.next();
@@ -110,7 +109,7 @@ public class HorarioAulaController {
                     listaTeoricos.add(grupo);
                 }
             }
-            listaTodos.add(grupo);
+//            listaTodos.add(grupo);
         }
 
         if (tipoHorario.equals("P")) {
@@ -121,13 +120,7 @@ public class HorarioAulaController {
             for (CatalogoGrupos teorico : listaTeoricos) {
                 listaOptions += "<option value='" + teorico.getIdGrupo() + "'>" + teorico.getClaveGrupo() + "</option>";
             }
-        } else if (tipoHorario.equals("All") || idMateria == -1) {
-            for (CatalogoGrupos grupo : listaTodos) {
-                if (grupo.getIdMateria().equals(materia)) {
-                    listaOptions += "<option value='" + grupo.getIdGrupo() + "'>" + grupo.getClaveGrupo() + "</option>";
-                }
-            }
-        }
+        } 
         return listaOptions;
     }
 
@@ -242,95 +235,6 @@ public class HorarioAulaController {
         return "";
     }
 
-//    @RequestMapping(method = RequestMethod.GET, value = "/ActualizarAula.xx")
-//    public @ResponseBody
-//    String actualizarAula(Model model, int idAula) {
-//        List<CatalogoAulas> tmpList = aulaFacade.findAll();
-//        ArrayList<CatalogoAulas> listaAulas = new ArrayList<CatalogoAulas>();
-//        for (Iterator<CatalogoAulas> it = tmpList.iterator(); it.hasNext();) {
-//            CatalogoAulas aulaTemp = it.next();
-//            if (aulaTemp != null) {
-//                if (listaAulas.size() < 1) {
-//                    listaAulas.add(aulaTemp);
-//                } else {
-//                    boolean insertar = true;
-//                    for (int i = 0; i < listaAulas.size(); i++) {
-//                        if (aulaTemp.getEdificio().equals(listaAulas.get(i).getEdificio())) {
-//                            insertar = false;
-//                            break;
-//                        }
-//                    }
-//                    if (insertar) {
-//                        listaAulas.add(aulaTemp);
-//                    }
-//                }
-//            }
-//        }
-////        model.addAttribute("listaGrupos", grupoFacade.findAll());
-////        model.addAttribute("listaAulas", listaAulas);
-////        BigDecimal idAula = BigDecimal.ZERO;
-////        if (idAulaString.equals(String.valueOf(0))) {
-////            for (Iterator<CatalogoAulas> it = tmpList.iterator(); it.hasNext();) {
-////                CatalogoAulas next = it.next();
-////                if (next.getStatus() == 1) {
-////                    idAula = next.getIdAula();
-////                    break;
-////                }
-////            }
-////        } else {
-////            idAula = BigDecimal.ONE;
-////        }
-////        System.out.println("id>>>>>>>>>>>>" + idAula);
-//        List<HorarioAula> listaHorarios = horarioAulaFacade.findAll();
-//        String[] nombreFilas = {"7:00 - 8:00", "8:00 - 9:00", "9:00 - 10:00", "10:00 - 11:00", "11:00 - 12:00", "12:00 - 13:00", "13:00 - 14:00",
-//            "14:00 - 15:00", "15:00 - 16:00", "16:00 - 17:00", "17:00 - 18:00", "18:00 - 19:00", "19:00 - 20:00", "20:00 - 21:00"};
-//        String[] nombreColumnas = {"Lunes", "Martes", "Miercoles", "Jueves", "Viernes"};
-//        HorarioAula matrizHorarios[][] = new HorarioAula[nombreFilas.length][nombreColumnas.length];
-//        MatrizConNombres matriz = new MatrizConNombres(nombreFilas, nombreColumnas, matrizHorarios);
-//        List<HorarioAula> horariosAula = new ArrayList<HorarioAula>();
-//        CatalogoAulas aula = aulaFacade.find(BigDecimal.valueOf((long) idAula));
-//        for (int i = 0; i < listaHorarios.size(); i++) {
-//            HorarioAula h = listaHorarios.get(i);
-////            System.out.println(h.getIdAula().getIdAula() + "<><><><>");
-//            if (h.getIdAula().getIdAula().equals(aula.getIdAula())) {
-//                horariosAula.add(h);
-//            }
-//        }
-//        if (horariosAula.size() > 0) {
-//            for (int i = 0; i < horariosAula.size(); i++) {
-//                HorarioAula obj = horariosAula.get(i);
-//                matrizHorarios[matriz.index(obj.getHorario(), 'f')][matriz.index(obj.getDia(), 'c')] = obj;
-////                System.out.println(obj.getStatus());
-//            }
-//        }
-//
-//        String render;
-//        render = "<table class=\"table table-responsive table-bordered\" id=\"tablaHorarioAula\">\n"
-//                + "                                        <tr id=\"title\">\n"
-//                + "                                            <td class=\"nombreFila\" id=\"horas\">Horas</td>\n"
-//                + "                                            <td><span >Lunes</span></td>\n"
-//                + "                                            <td><span>Martes</span></td>\n"
-//                + "                                            <td><span>Mi&eacute;rcoles</span></td>\n"
-//                + "                                            <td><span>Jueves</span></td>\n"
-//                + "                                            <td><span>Viernes</span></td>\n"
-//                + "                                        </tr>\n"
-//                + tableRender(nombreColumnas, nombreFilas, matriz)
-//                + "                                    </table>";
-//        return render;
-//    }
-//
-//    private String tableRender(String[] nombreColumnas, String[] nombreFilas, MatrizConNombres matriz) {
-//        String render = "";
-//        for (int i = 0; i < nombreFilas.length; i++) {
-//            render += "<tr>\n"
-//                    + "                                     <td class=\"nombreFila\">" + nombreFilas[i] + "</td>\n";
-//            for (int j = 0; j < nombreColumnas.length; j++) {
-//                render += "                                            <td class=\"editable\" fil=\"" + nombreFilas[i] + "\" col=\"" + nombreColumnas[j] + "\">" + ((matriz.getValueAt(i, j) != null) ? grupoFacade.find(matriz.getValueAt(i, j).getIdGrupo().getIdGrupo()).getClaveGrupo() + "/" + materiaFacade.find(matriz.getValueAt(i, j).getIdGrupo().getIdMateria().getIdMateria()).getNombreMateria() : "-------------------------") + "</td>\n";
-//            }
-//            render += "                                        </tr>\n";
-//        }
-//        return render;
-//    }
     @RequestMapping(method = RequestMethod.GET, value = "/EdificioSeleccionado.xx")
     public @ResponseBody
     String obtenerEdificioSeleccionado(Model model, int idAula) {
@@ -365,6 +269,7 @@ public class HorarioAulaController {
     String eliminarHorario(Model modelo, String idHorario, String tipoHorario) {
 
         Integer id = Integer.valueOf(idHorario);
+        System.out.println("Posible error en EliminarHorario.xx id Horario recibido--> " + id);
         HorarioAula h = horarioAulaFacade.find(BigDecimal.valueOf((long) id));
 
         CatalogoGrupos g = grupoFacade.find(h.getIdGrupo().getIdGrupo());
@@ -379,5 +284,50 @@ public class HorarioAulaController {
         }
         horarioAulaFacade.remove(h);
         return "";
+    }
+
+    @RequestMapping(method = RequestMethod.POST, value = "/InicializarVariables.xx")
+    public @ResponseBody
+    VariablesJSON inicializarVariables(Model modelo) {
+        VariablesJSON variables = new VariablesJSON();
+        String idAula = "-1";
+        String idGrupo = "-1";
+        String idMateria = "-1";
+        String tGrupo = "T";
+        List<CatalogoAulas> aulas = aulaFacade.findAll();
+        for (Iterator<CatalogoAulas> it = aulas.iterator(); it.hasNext();) {
+            CatalogoAulas aula = it.next();
+            if (aula.getStatus() == 1) {
+                idAula = String.valueOf(aula.getIdAula());
+                break;
+            }
+        }
+        List<CatalogoGrupos> grupos = grupoFacade.findAll();
+        for (Iterator<CatalogoGrupos> it = grupos.iterator(); it.hasNext();) {
+            CatalogoGrupos grupo = it.next();
+            if (grupo.getStatus() == 1) {
+                idMateria = String.valueOf(grupo.getIdMateria().getIdMateria());
+                if (grupo.getHorasPracticasRestantes() > 0) {
+                    if (grupo.getHorasTeoricasRestantes() > 0) {
+                        idGrupo = String.valueOf(grupo.getIdGrupo());
+                        tGrupo = "1";
+                        break;
+                    } else {
+                        idGrupo = String.valueOf(grupo.getIdGrupo());
+                        tGrupo = "0";
+                        break;
+                    }
+                }
+            }
+        }
+        try {
+            variables.setIdAula(idAula);
+            variables.setIdGrupo(idGrupo);
+            variables.setTipoGrupo(tGrupo);
+            variables.setIdMateria(idMateria);
+        } catch (Exception e) {
+            System.out.println("Error con JSON en InicializarVariables.xx");
+        }
+        return variables;
     }
 }

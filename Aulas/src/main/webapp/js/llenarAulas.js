@@ -1,4 +1,8 @@
 var tipoAula;
+//var idAula;
+//var tipoGrupoModal;
+//var idMateria;
+
 (function() {
     window.$GET = [];
     if (location.search) {
@@ -13,40 +17,96 @@ var tipoAula;
     }
 })();
 $(document).ready(function() {
-    var idAula = $GET['idAulaString'];
-    $("#modalDesocupado").attr("status", "add");
-    $.post("ActualizarInfoAula.xx", {idAula: idAula}, function(infoAula) {
-        var id = infoAula.idAula;
-        var ed = infoAula.nombreEdificio;
-        var au = infoAula.nombreAula;
-        tipoAula = infoAula.tipoAula;
-        $.ajax({
-            type: "GET",
-            url: "ObtenerListaAulas.xx",
-            data: {
-                nombreEdificio: ed
-            },
-            success: function(data) {
-                $("#aula").html(data);
-                $("#idAula").text(id);
-                $("#idAula").attr("value", id);
-                $("#edificio").val(ed);
-                $("#aula").val(id);
-                $("#aulaModal").text(au);
-                $("#edificioModal").text(ed);
-                if (tipoAula === '0') {
-                    $("#tipoAulaModal").text("práctica");
-                } else {
-                    $("#tipoAulaModal").text("teórica");
-                }
-            },
-            error: function(error) {
-                alert(error);
+    var idA;
+    var idG;
+    var tG;
+    var idM;
+    if ((!$GET['idAulaString'] || !$GET['tgM'] || !$GET['idG'] || !$GET['idM'])) {
+        $.post("InicializarVariables.xx", {}, function(variables) {
+            if ($GET['idAulaString']) {
+                idA = $GET['idAulaString'];
+            } else {
+                idA = variables.idAula;
             }
+            idG = variables.idGrupo;
+            tG = variables.tipoGrupo;
+            idM = variables.idMateria;
+            $(location).attr('href', "LlenarAula.xx?idAulaString=".concat(idA + "&tgM=" + tG + "&idG=" + idG + "&idM=" + idM));
+            constructor();
+//            alert("Entro");
         });
-    });
-    $("#dialog").hide();
-    actualizaIdAula();
+    } else {
+        idA = $GET['idAulaString'];
+        idG = $GET['idG'];
+        tG = $GET['tgM'];
+        constructor();
+    }
+    function constructor() {
+//        idAula = $GET['idAulaString'];
+        $("#modalDesocupado").attr("status", "add");
+        $.post("ActualizarInfoAula.xx", {idAula: $GET['idAulaString']}, function(infoAula) {
+            var id = infoAula.idAula;
+            var ed = infoAula.nombreEdificio;
+            var au = infoAula.nombreAula;
+            tipoAula = infoAula.tipoAula;
+            $.ajax({
+                type: "GET",
+                url: "ObtenerListaAulas.xx",
+                data: {
+                    nombreEdificio: ed
+                },
+                success: function(data) {
+                    $("#aula").html(data);
+//                    $("#idAula").text(id);
+//                    $("#idAula").attr("value", id);
+                    $("#edificio").val(ed);
+                    $("#aula").val(id);
+                    $("#aulaModal").text(au);
+                    $("#edificioModal").text(ed);
+//--------------------------------------------INICIO---------------------------------------------------\\
+                    $("#materiaModal").val($GET['idM']);
+                    $("#grupoModal").val($GET['idG']);
+                    var tg = ($GET['tgM'] === '1') ? "T" : "P";
+                    $("#tipoHorario").attr("tipo", tg);
+                    if ($GET['tgM'] === '1') {
+//                        alert('entro');
+                        $("#tipoHorario").attr("tipo", "T");
+                        $("#botonTeoricos").attr("class", "btn btn-success");
+                        $("#botonPracticos").attr("class", "btn btn-default");
+                        var idMateria = $("#materiaModal").val();
+                        if (idMateria === '-1') {
+                            obtenerGrupos("T");
+                        } else {
+                            obtenerGruposPorMateria("T", idMateria);
+                        }
+                    } else {
+                        $("#tipoHorario").attr("tipo", "P");
+                        $("#botonTeoricos").attr("class", "btn btn-default");
+                        $("#botonPracticos").attr("class", "btn btn-success");
+                        var idMateria = $("#materiaModal").val();
+//                        alert(idMateria);
+                        if (idMateria === '-1') {
+                            obtenerGrupos("P");
+                        } else {
+                            obtenerGruposPorMateria("P", idMateria);
+                        }
+                    }
+//-------------------------------------------------FIN----------------------------------------------\\                    
+                    if (tipoAula === '0') {
+                        $("#tipoAulaModal").text("práctica");
+                    } else {
+                        $("#tipoAulaModal").text("teórica");
+                    }
+                },
+                error: function(error) {
+                    alert(error);
+                }
+            });
+        });
+        $("#dialog").hide();
+
+//        actualizaIdAula();
+    }
 });
 
 $("#cancelarPopup").click(function() {
@@ -81,7 +141,7 @@ $(".editable").click(function() {
 
         console.log(title);
     }
-    obtenerGrupos("All");
+//    obtenerGrupos("P");
 });
 $("#edificio").change(
         function() {
@@ -123,7 +183,6 @@ $("#materiaModal").change(
 function obtenerInformacionGrupo(idGrupo,
 //tipoGrupo,
         tipoAula) {
-//            alert(tipoAula);
     $.ajax({
         type: "GET",
         url: "ActualizarGrupo.xx",
@@ -138,27 +197,30 @@ function obtenerInformacionGrupo(idGrupo,
     });
 }
 
-function actualizaIdAula() {
-    var edificio = $("#edificio").val();
-    var aula = $("#aula").val();
-    $.ajax({
-        type: "GET",
-        url: "ActualizarIdAula.xx",
-        data: {
-            edificio: edificio,
-            aula: aula
-        },
-        success: function(data) {
-            $("#idAula").text(data);
-            $("#idAula").attr("value", data);
-        }, error: function(err) {
-            alert(err);
-        }
-    });
-}
+//function actualizaIdAula() {
+//    var edificio = $("#edificio").val();
+//    var aula = $("#aula").val();
+//    $.ajax({
+//        type: "GET",
+//        url: "ActualizarIdAula.xx",
+//        data: {
+//            edificio: edificio,
+//            aula: aula
+//        },
+//        success: function(data) {
+//            $("#idAula").text(data);
+//            $("#idAula").attr("value", data);
+//        }, error: function(err) {
+//            alert(err);
+//        }
+//    });
+//}
 function actualizarAula() {
     var idAula = $("#aula").val();
-    $(location).attr("href", "LlenarAula.xx?idAulaString=".concat(idAula));
+    var idMat = $("#materiaModal").val();//??
+    var idG = $("#grupoModal").val();
+    var tgM = $("#tipoHorario").attr("tipo");
+    $(location).attr('href', "LlenarAula.xx?idAulaString=".concat(idAula + "&tgM=" + ((tgM === 'T') ? '1' : '0') + "&idG=" + idG + "&idM=" + idMat));
 }
 
 function cambioEdificio() {
@@ -171,7 +233,7 @@ function cambioEdificio() {
         },
         success: function(data) {
             $("#aula").html(data);
-            actualizaIdAula();
+//            actualizaIdAula();
             actualizarAula();
         },
         error: function(error) {
@@ -182,7 +244,7 @@ function cambioEdificio() {
 ;
 
 function cambioAula() {
-    actualizaIdAula();
+//    actualizaIdAula();
     actualizarAula();
 }
 
@@ -196,7 +258,6 @@ function eliminarHorario(idHorario, tipoHorario) {
             tipoHorario: tipoHorario
         },
         success: function(data) {
-//            $("#aula").html(data);
             actualizarAula();
         },
         error: function(error) {
@@ -208,7 +269,6 @@ function eliminarHorario(idHorario, tipoHorario) {
 $("#botonPracticos").click(function() {
     $("#tipoHorario").attr("tipo", "P");
     $("#botonTeoricos").attr("class", "btn btn-default");
-    $("#botonTodos").attr("class", "btn btn-default");
     $("#botonPracticos").attr("class", "btn btn-success");
     var idMateria = $("#materiaModal").val();
     if (idMateria === '-1') {
@@ -217,30 +277,17 @@ $("#botonPracticos").click(function() {
         obtenerGruposPorMateria("P", idMateria);
     }
 });
-$("#botonTodos").click(function() {
-    $("#tipoHorario").attr("tipo", "All");
-    $("#botonTodos").attr("class", "btn btn-success");
-    $("#botonTeoricos").attr("class", "btn btn-default");
-    $("#botonPracticos").attr("class", "btn btn-default");
-    var idMateria = $("#materiaModal").val();
-    if (idMateria === '-1') {
-        obtenerGrupos("All");
-    } else {
-        obtenerGruposPorMateria("All", idMateria);
-    }
-});
+
 $("#botonTeoricos").click(function() {
     $("#tipoHorario").attr("tipo", "T");
     $("#botonTeoricos").attr("class", "btn btn-success");
     $("#botonPracticos").attr("class", "btn btn-default");
-    $("#botonTodos").attr("class", "btn btn-default");
     var idMateria = $("#materiaModal").val();
     if (idMateria === '-1') {
         obtenerGrupos("T");
     } else {
         obtenerGruposPorMateria("T", idMateria);
     }
-
 });
 
 function obtenerGrupos(tipoHorario) {
@@ -261,7 +308,7 @@ function obtenerGrupos(tipoHorario) {
     });
 }
 function obtenerGruposPorMateria(tipoHorario, idMateria) {
-//    alert(idMateria);
+//    alert(tipoHorario);
     $.ajax({
         type: "GET",
         url: "ObtenerListaGruposPorMateria.xx",
@@ -270,13 +317,17 @@ function obtenerGruposPorMateria(tipoHorario, idMateria) {
             tipoHorario: tipoHorario
         },
         success: function(data) {
+//            alert(data);
             if (data) {
                 $("#grupoModal").html(data);
                 var grupo = $("#grupoModal").val();
-                obtenerInformacionGrupo(grupo, tipoAula);
-            }else{
+                var tH = ((tipoHorario === "T") ? 0 : 1);
+                obtenerInformacionGrupo(grupo, tH);
+//                alert("hay datos");
+            } else {
                 $("#grupoModal").html("");
-                $("#tablaModal").html('<h1>There are not groups to show</h1>');
+                $("#tablaModal").html('<h1>No hay grupos para mostrar</h1>');
+//                alert("No hay datos recibidos desde el controlador");
             }
         },
         error: function(error) {
@@ -286,10 +337,10 @@ function obtenerGruposPorMateria(tipoHorario, idMateria) {
     });
 }
 
-
 function agregarGrupo() {
     var idGrupo = $("#grupoModal").val();
-    var idAula = $("#idAula").text();
+//    var idAula = $("#idAula").text();
+    var idAula = $GET['idAulaString'];
     var horario = $("#horaModal").text();
     var dia = $("#diaModal").text();
     var tipoHorario = $("#tipoHorario").attr("tipo");
@@ -304,11 +355,11 @@ function agregarGrupo() {
             tipoHorario: tipoHorario
         },
         success: function(data) {
-            actualizaIdAula();
+//            actualizaIdAula();
             actualizarAula();
         },
-        error: function(data) {
-            alert('Error al in sertar horario');
+        error: function(error) {
+            alert('Error al insertar horario');
         }
     });
 }

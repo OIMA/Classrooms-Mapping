@@ -13,7 +13,7 @@
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <meta name="description" content="">
-        <meta name="author" content="">
+        <meta name="author" content="Oscar Ivan Martinez Arce">
 
         <title>Administraci&oacute;n de aulas</title>
 
@@ -56,8 +56,8 @@
 
                         <div class="btn-toolbar pull-right">
                             <div class="btn-group" id="tipoHorario" tipo="T">
-                                <button id="botonTodos" type="button" class="btn btn-success" value="T">Todos</button>
-                                <button id="botonPracticos" type="button" class="btn btn-default" value="P">Pr&aacute;cticos</button>
+                                <!--<button id="botonTodos" type="button" class="btn btn-success" value="T">Todos</button>-->
+                                <button id="botonPracticos" type="button" class="btn btn-success" value="P">Pr&aacute;cticos</button>
                                 <button id="botonTeoricos" type="button" class="btn btn-default" value="T">Te&oacute;ricos</button>
                             </div>
                         </div>
@@ -144,7 +144,7 @@
                                                 <select class="form-control" id="aula">
                                                 </select>
                                             </div>
-                                            <span id="idAula" value="1">1</span>
+                                            <!--<span id="idAula" value="1"></span>-->
                                         </div>
                                     </form>
                                 </div>

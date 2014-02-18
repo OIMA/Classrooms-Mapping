@@ -211,10 +211,64 @@ public class GlobalController {
                 nuevaLista.add(materia);
             }
         }
+
+        String danger = "style=\"background: #DF4444;color: white;\"";
+        String warning = "style=\"background: #f0ad4e;color: white;\"";
+        String def = "";
         for (Iterator<CatalogoMaterias> it = nuevaLista.iterator(); it.hasNext();) {
             CatalogoMaterias materia = it.next();
-            listaMaterias += "<option value='"+materia.getIdMateria()+"'>" + materia.getNombreMateria() + "</option>";
+            boolean status = false;
+            List<CatalogoGrupos> findBySpecificField = grupoFacade.findBySpecificField("idMateria", materia, "equal", null, null);
+            for (CatalogoGrupos grupo : findBySpecificField) {
+                if (grupo.getHorasPracticasRestantes() > 0 || grupo.getHorasTeoricasRestantes() > 0) {
+                    status = true;
+                } else {
+                    status = false;
+                }
+            }
+            listaMaterias += "<option value='" + materia.getIdMateria() +  "' "+((status) ? warning : danger) +">" + materia.getNombreMateria() + "</option>";
         }
         return listaMaterias;
+    }
+
+    @RequestMapping(method = RequestMethod.GET, value = "/Estadisticas.xx")
+    public String irAEstadisticas(Model model) {
+        String barRender = "";
+        String colorClass = "";
+        List<CatalogoAulas> listaAulas = aulaFacade.findAll();
+        for (CatalogoAulas aula : listaAulas) {
+            int numeroDeHorarios = 0;
+            List<HorarioAula> oima = horarioAulaFacade.findBySpecificField("idAula", aula.getIdAula(), "equal", null, null);
+            numeroDeHorarios = oima.size() * 100 / 70;
+            if (numeroDeHorarios > 0 && numeroDeHorarios < 25) {
+                colorClass = "info";
+            } else if (numeroDeHorarios >= 25 && numeroDeHorarios < 50) {
+                colorClass = "success";
+            } else if (numeroDeHorarios >= 50 && numeroDeHorarios < 75) {
+                colorClass = "warning";
+            } else if (numeroDeHorarios >= 75) {
+                colorClass = "danger";
+            }
+            barRender += ""
+                    + "                                            <div class=\"row clearfix\">\n"
+                    + "                                                <div class=\"col-md-2 column\">\n"
+                    + "                                                    <span class=\"nombreAula text-center\">" + aula.getEdificio() + " - " + aula.getAula() + "</span>\n"
+                    + "                                                </div>\n"
+                    + "                                                <div class=\"col-md-6 column\">\n"
+                    + "                                                    <div class=\"progress\">\n"
+                    + "                                                        <div class=\"progress-bar progress-bar-" + colorClass + "\" style=\"width: " + numeroDeHorarios + "%\">\n"
+                    + "                                                        </div>\n"
+                    + "                                                    </div>\n"
+                    + "                                                </div>\n"
+                    + "                                                <div class=\"col-md-2 column\">\n"
+                    + "                                                    <button type=\"button\" class=\"btn btn-default btn-xs\">Obtener PDF</button>\n"
+                    + "                                                </div>\n"
+                    + "                                                <div class=\"col-md-2 column\">\n"
+                    + "                                                    <button type=\"button\" class=\"btn btn-primary btn-xs btnAula\" idBotonAula=\"" + aula.getIdAula() + "\">Editar Aula</button>\n"
+                    + "                                                </div>\n"
+                    + "                                            </div>";
+        }
+        model.addAttribute("listaBarrasPorAula", barRender);
+        return "/Estadisticas";
     }
 }
