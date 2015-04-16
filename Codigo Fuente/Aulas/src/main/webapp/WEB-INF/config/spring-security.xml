@@ -1,0 +1,54 @@
+<beans:beans xmlns="http://www.springframework.org/schema/security"
+             xmlns:beans="http://www.springframework.org/schema/beans" 
+             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xsi:schemaLocation="http://www.springframework.org/schema/beans
+	http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+	http://www.springframework.org/schema/security
+	http://www.springframework.org/schema/security/spring-security-3.0.3.xsd">
+
+    <http auto-config="true">
+        <!--ROLES DEL ADMINISTRADOR-->
+<!--        <intercept-url pattern="/Formularios.xx" access="ROLE_ADMINISTRADOR" />  
+        <intercept-url pattern="/NuevoUsuario.xx" access="ROLE_ADMINISTRADOR" />
+        <intercept-url pattern="/NuevaCarrera.xx" access="ROLE_ADMINISTRADOR" />  
+        <intercept-url pattern="/Tablas.xx" access="ROLE_ADMINISTRADOR" />  
+        <intercept-url pattern="/ObtenerReporteAula.xx" access="ROLE_ADMINISTRADOR" />  
+        <intercept-url pattern="/LlenarAula.xx" access="ROLE_ADMINISTRADOR" />  -->
+
+        <!--\ROLES DEL ADMINISTRADOR-->
+        <!--ROLES DEL COORDINADOR-->
+<!--        <intercept-url pattern="/Tablas.xx" access="ROLE_COORDINADOR" />
+        <intercept-url pattern="/Formularios.xx" access="ROLE_COORDINADOR" />-->
+        <!--\ROLES DEL COORDINADOR-->
+        <!--ROLES GENERALES-->
+        <intercept-url pattern="/Error404.jsp" filters="none"  />
+        <!--\ROLES_GENERALES-->
+    <!--</http>-->
+        <form-login login-page="/index.xx" default-target-url="/Estadisticas.xx"
+                            authentication-failure-url="/InicioFallido.xx" />
+        <logout logout-success-url="/index.xx" />
+    </http>
+    <authentication-manager>
+        <authentication-provider>
+<!--             <user-service>
+			<user name="ADMIN" password="aulas1000" authorities="ROLE_ADMINISTRADOR" />
+                        <user name="SISTEMAS" password="aulas3135" authorities="ROLE_COORDINADOR" />
+                        <user name="MECATRONICA" password="aulas3110" authorities="ROLE_COORDINADOR" />
+                        <user name="QUIMICA" password="aulas3130" authorities="ROLE_COORDINADOR" />
+                        <user name="ELECTROMECANICA" password="aulas3105" authorities="ROLE_COORDINADOR" />
+                        <user name="ELECTRONICA" password="aulas3115" authorities="ROLE_COORDINADOR" />
+                        <user name="INDUSTRIAL" password="aulas3120" authorities="ROLE_COORDINADOR" />
+                        <user name="LOGISTICA" password="aulas3120" authorities="ROLE_COORDINADOR" />
+                        <user name="GESTION" password="aulas3125" authorities="ROLE_COORDINADOR" />-->
+                                   <!--</user-service>--> 
+            <jdbc-user-service 
+                                        data-source-ref="dataSource"
+                              users-by-username-query="select nombre_usuario, password_usuario, status from catalogo_usuarios where nombre_usuario=? "
+                              authorities-by-username-query="select u.nombre_usuario, ur.authority from catalogo_usuarios u, user_role ur where u.id_usuario=ur.user_id and u.nombre_usuario=? "
+                              role-prefix="ROLE_"
+                />               
+            
+        </authentication-provider>
+    </authentication-manager>
+
+</beans:beans>
